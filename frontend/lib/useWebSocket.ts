@@ -8,19 +8,25 @@ export const useWebSocket = (assignmentId?: string) => {
     useAssignmentStore();
 
   useEffect(() => {
+    // 1. Strict execution protection against SSR environments
+    if (typeof window === 'undefined') return;
+
     const WS_URL =
       process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:4000/ws';
-    ws.current = new WebSocket(WS_URL);
+    
+    // 2. Instantiate safely inside the browser context
+    const socket = new WebSocket(WS_URL);
+    ws.current = socket;
 
-    ws.current.onopen = () => {
-      if (assignmentId && ws.current) {
-        ws.current.send(
+    socket.onopen = () => {
+      if (assignmentId && socket.readyState === WebSocket.OPEN) {
+        socket.send(
           JSON.stringify({ type: 'subscribe', assignmentId })
         );
       }
     };
 
-    ws.current.onmessage = (event) => {
+    socket.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
 
@@ -33,11 +39,19 @@ export const useWebSocket = (assignmentId?: string) => {
           setPaperFromWS(data.paperId, data.assignmentId);
           fetchAssignments();
         }
-      } catch {}
+      } catch (err) {
+        console.error('WebSocket message parsing error:', err);
+      }
+    };
+
+    socket.onerror = (error) => {
+      console.error('WebSocket execution error:', error);
     };
 
     return () => {
-      ws.current?.close();
+      if (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING) {
+        socket.close();
+      }
     };
-  }, [assignmentId]);
+  }, [assignmentId, updateAssignmentStatus, setPaperFromWS, fetchAssignments]);
 };
