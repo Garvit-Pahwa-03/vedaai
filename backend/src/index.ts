@@ -15,9 +15,11 @@ if (!fs.existsSync('uploads')) fs.mkdirSync('uploads');
 
 // Middleware
 app.use(cors({
-  origin: process.env.FRONTEND_URL
-    ? [process.env.FRONTEND_URL, 'http://localhost:3000']
-    : 'http://localhost:3000',
+  origin: [
+    'http://localhost:3000',
+    'https://your-app.vercel.app',  // your actual Vercel URL
+    /\.vercel\.app$/                // or allow all vercel previews
+  ],
   credentials: true,
 }));
 app.use(express.json());
