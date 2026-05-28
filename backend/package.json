@@ -1,0 +1,42 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon --watch \"src/**/*.ts\" --exec \"npx ts-node -r dotenv/config\" src/index.ts",
+    "dev:worker": "nodemon --watch \"src/**/*.ts\" --exec \"npx ts-node -r dotenv/config\" src/workers/assignmentWorker.ts",
+    "kill-port": "for /f \"tokens=5\" %a in ('netstat -ano ^| findstr :4000') do taskkill /PID %a /F",
+    "build": "tsc",
+    "start": "node -r dotenv/config dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "anthropic": "^0.0.0",
+    "bullmq": "^5.77.6",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "groq-sdk": "^1.2.0",
+    "ioredis": "^5.11.0",
+    "mongoose": "^9.6.2",
+    "multer": "^2.1.1",
+    "pdf-parse": "^2.4.5",
+    "uuid": "^14.0.0",
+    "ws": "^8.21.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/multer": "^2.1.0",
+    "@types/node": "^25.9.1",
+    "@types/ws": "^8.18.1",
+    "nodemon": "^3.1.14",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3"
+  }
+}
