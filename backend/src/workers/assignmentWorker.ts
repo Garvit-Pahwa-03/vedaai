@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import { Worker } from 'bullmq';
+import { bullMQConnection } from '../queues/assignmentQueue';
 import { connectDB } from '../config/database';
 import Assignment from '../models/Assignment';
 import GeneratedPaper from '../models/GeneratedPaper';
@@ -8,12 +9,6 @@ import { wsManager } from '../services/websocketManager';
 import fs from 'fs';
 
 connectDB();
-
-
-const connection = {
-  host: process.env.REDIS_HOST || 'localhost',
-  port: parseInt(process.env.REDIS_PORT || '6379'),
-};
 
 const worker = new Worker(
   'assignment-generation',
@@ -26,7 +21,6 @@ const worker = new Worker(
     const assignment = await Assignment.findById(assignmentId);
     if (!assignment) throw new Error('Assignment not found');
 
-    // Read uploaded file if exists
     let fileContent: string | undefined;
     if (assignment.filePath && fs.existsSync(assignment.filePath)) {
       fileContent = fs.readFileSync(assignment.filePath, 'utf-8');
@@ -57,7 +51,7 @@ const worker = new Worker(
 
     return { paperId: paper._id };
   },
-  { connection, concurrency: 2 }
+  { connection: bullMQConnection, concurrency: 2 }
 );
 
 worker.on('failed', async (job, err) => {
