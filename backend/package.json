@@ -9,7 +9,7 @@
     "dev:worker": "nodemon --watch \"src/**/*.ts\" --exec \"npx ts-node -r dotenv/config\" src/workers/assignmentWorker.ts",
     "kill-port": "for /f \"tokens=5\" %a in ('netstat -ano ^| findstr :4000') do taskkill /PID %a /F",
     "build": "tsc",
-    "start": "node -r dotenv/config dist/index.js",
+    "start": "sh start.sh",
     "start:worker": "node -r dotenv/config dist/workers/assignmentWorker.js"
   },
   "keywords": [],
