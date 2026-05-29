@@ -2,7 +2,7 @@
 
 A full-stack AI-powered assessment creation platform that allows teachers to create assignments, generate structured question papers using AI, and view formatted output with difficulty tagging and answer keys.
 
-**Live Demo:** https://vedaai-frontend.vercel.app  
+**Live Demo:** https://vedaai-seven.vercel.app
 **Backend API:** https://vedaai-api-ptok.onrender.com
 
 ---
