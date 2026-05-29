@@ -17,10 +17,18 @@ export const buildPrompt = (
     .map((q) => `- ${q.numberOfQuestions} ${q.type} (${q.marksPerQuestion} marks each)`)
     .join('\n');
 
+  const fileSection = fileContent && fileContent.trim().length > 0
+    ? `REFERENCE MATERIAL (base ALL questions strictly on this content):
+---
+${fileContent}
+---
+
+`
+    : '';
+
   return `You are an expert teacher creating a structured exam question paper.
 
-${fileContent ? `Reference material:\n${fileContent}\n\n` : ''}
-Create a question paper with these requirements:
+${fileSection}Create a question paper with these requirements:
 ${qList}
 
 Additional instructions: ${additionalInstructions || 'None'}
@@ -52,7 +60,8 @@ Rules:
 - difficulty must be exactly "easy", "moderate", or "hard"
 - Group questions by type into sections (Section A, B, C...)
 - Mix difficulties roughly: 40% easy, 40% moderate, 20% hard
-- Make questions relevant to the material if provided
+- If reference material is provided, ALL questions must be directly based on it
+- If no reference material, use the additional instructions to determine subject matter
 - Return ONLY the JSON object, nothing else`;
 };
 
@@ -63,12 +72,14 @@ export const generateQuestionPaper = async (
 ) => {
   const prompt = buildPrompt(questionTypes, additionalInstructions, fileContent);
 
+  console.log('File content included in prompt:', !!fileContent && fileContent.trim().length > 0);
+
   const completion = await groq.chat.completions.create({
     model: 'llama-3.3-70b-versatile',
     messages: [
       {
         role: 'system',
-        content: 'You are an expert teacher. Always respond with valid JSON only. No markdown, no backticks, no explanation.',
+        content: 'You are an expert teacher. Always respond with valid JSON only. No markdown, no backticks, no explanation. If reference material is provided, base ALL questions strictly on that material.',
       },
       {
         role: 'user',

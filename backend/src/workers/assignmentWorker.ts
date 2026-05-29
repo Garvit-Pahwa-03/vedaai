@@ -7,8 +7,39 @@ import GeneratedPaper from '../models/GeneratedPaper';
 import { generateQuestionPaper } from '../services/aiService';
 import { wsManager } from '../services/websocketManager';
 import fs from 'fs';
+import path from 'path';
 
 connectDB();
+
+const extractFileContent = (filePath: string): string => {
+  try {
+    if (!fs.existsSync(filePath)) return '';
+
+    const ext = path.extname(filePath).toLowerCase();
+
+    if (ext === '.txt') {
+      return fs.readFileSync(filePath, 'utf-8').slice(0, 3000);
+    }
+
+    if (ext === '.pdf') {
+      const buffer = fs.readFileSync(filePath);
+      const text = buffer
+        .toString('utf-8')
+        .replace(/[^\x20-\x7E\n\r\t]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+      return text.slice(0, 3000);
+    }
+
+    if (['.jpg', '.jpeg', '.png'].includes(ext)) {
+      return `[Image uploaded: ${path.basename(filePath)}. Generate questions based on the additional instructions provided.]`;
+    }
+
+    return '';
+  } catch {
+    return '';
+  }
+};
 
 const worker = new Worker(
   'assignment-generation',
@@ -23,7 +54,8 @@ const worker = new Worker(
 
     let fileContent: string | undefined;
     if (assignment.filePath && fs.existsSync(assignment.filePath)) {
-      fileContent = fs.readFileSync(assignment.filePath, 'utf-8');
+      fileContent = extractFileContent(assignment.filePath);
+      console.log(`File extracted: ${fileContent.length} chars from ${assignment.filePath}`);
     }
 
     const { parsed, rawPrompt } = await generateQuestionPaper(
