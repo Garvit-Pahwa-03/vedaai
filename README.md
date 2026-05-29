@@ -9,7 +9,7 @@ A full-stack AI-powered assessment creation platform that allows teachers to cre
 
 ## Architecture Overview
 
-![VedaAI Architecture](./docs/architecture.svg)
+![VedaAI Architecture](architecture.svg)
 
 ### Request Flow
 
