@@ -8,29 +8,7 @@ A full-stack AI-powered assessment creation platform that allows teachers to cre
 ---
 
 ## Architecture Overview
-
-```
-┌─────────────────────────────────────────────────────────┐
-│                    Next.js Frontend                      │
-│         Zustand · WebSocket · Tailwind CSS              │
-└────────────────────────┬────────────────────────────────┘
-                         │ HTTP + WebSocket
-┌────────────────────────▼────────────────────────────────┐
-│                  Express API Server                      │
-│              Node.js · TypeScript · CORS                │
-└──────┬──────────────────┬──────────────────┬────────────┘
-       │                  │                  │
-┌──────▼──────┐  ┌────────▼───────┐  ┌──────▼──────┐
-│   MongoDB   │  │     Redis      │  │   BullMQ    │
-│ Assignments │  │ Cache · State  │  │   Workers   │
-│   Papers    │  │                │  │             │
-└─────────────┘  └────────────────┘  └──────┬──────┘
-                                            │
-                                   ┌────────▼───────┐
-                                   │   Groq LLM     │
-                                   │ llama-3.3-70b  │
-                                   └────────────────┘
-```
+![VedaAI Architecture](architecture.svg)
 
 ### Request Flow
 
