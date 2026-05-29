@@ -75,8 +75,7 @@ A full-stack AI-powered assessment creation platform that allows teachers to cre
 
 ```
 vedaai/
-├── docs/
-│   └── architecture.svg           # Architecture diagram
+├── architecture.svg        # Architecture diagram
 ├── backend/
 │   ├── src/
 │   │   ├── config/
