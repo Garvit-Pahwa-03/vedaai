@@ -8,6 +8,7 @@ A full-stack AI-powered assessment creation platform that allows teachers to cre
 ---
 
 ## Architecture Overview
+![Architecture](/architecture.svg)
 
 ### Request Flow
 
