@@ -13,14 +13,24 @@ const server = http.createServer(app);
 
 if (!fs.existsSync('uploads')) fs.mkdirSync('uploads');
 
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://vedaai-seven.vercel.app',
+  'https://vedaai-pahwagarvit775-6993s-projects.vercel.app',
+];
+
 app.use(cors({
-  origin: [
-    'http://localhost:3000',
-    'https://vedaai-seven.vercel.app',
-    'https://vedaai-pahwagarvit775-6993s-projects.vercel.app',
-  ],
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    const isAllowed =
+      allowedOrigins.includes(origin) ||
+      /^https:\/\/vedaai[^.]*\.vercel\.app$/.test(origin) ||
+      /^https:\/\/[^.]*pahwagarvit[^.]*\.vercel\.app$/.test(origin);
+    return callback(isAllowed ? null : new Error(`CORS blocked: ${origin}`), isAllowed);
+  },
   credentials: true,
 }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
