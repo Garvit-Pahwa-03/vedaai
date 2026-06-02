@@ -8,7 +8,6 @@ interface AuthStore {
   isLoading: boolean;
   isAuthenticated: boolean;
   signup: (data: { firstName: string; lastName: string; email: string; password: string }) => Promise<void>;
-  verifyOTP: (email: string, otp: string) => Promise<void>;
   signin: (email: string, password: string) => Promise<void>;
   logout: () => void;
   loadFromStorage: () => void;
@@ -22,13 +21,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
 
   signup: async (data) => {
     set({ isLoading: true });
-    await authApi.signup(data);
-    set({ isLoading: false });
-  },
-
-  verifyOTP: async (email, otp) => {
-    set({ isLoading: true });
-    const res = await authApi.verifyOTP({ email, otp });
+    const res = await authApi.signup(data);
     localStorage.setItem('vedaai_token', res.token);
     localStorage.setItem('vedaai_user', JSON.stringify(res.user));
     set({ token: res.token, user: res.user, isAuthenticated: true, isLoading: false });
