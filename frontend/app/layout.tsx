@@ -4,6 +4,7 @@ import Sidebar from '@/app/components/layout/Sidebar';
 import TopBar from '@/app/components/layout/TopBar';
 import StoreInitializer from '@/app/components/layout/StoreInitializer';
 import BottomNav from '@/app/components/layout/BottomNav';
+import AuthInitializer from '@/app/components/layout/AuthInitializer';
 
 export const metadata: Metadata = {
   title: 'VedaAI - AI Assessment Creator',
@@ -14,6 +15,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body>
+        <AuthInitializer />
         <div className="flex h-screen overflow-hidden">
           <div className="hidden md:block">
             <Sidebar />

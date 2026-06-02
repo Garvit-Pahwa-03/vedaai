@@ -42,3 +42,10 @@ export interface GeneratedPaper {
   sections: Section[];
   createdAt: string;
 }
+
+export interface User {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+}

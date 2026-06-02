@@ -1,8 +1,9 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Settings } from 'lucide-react';
+import { Settings, LogOut } from 'lucide-react';
 import { useAssignmentStore, selectUpcomingCount } from '@/store/assignmentStore';
+import { useAuthStore } from '@/store/authStore';
 
 const navItems = [
   { href: '/', label: 'Home', iconPath: '/icons/4squares.svg' },
@@ -14,9 +15,8 @@ const navItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
-
-  // ── CHANGED: use upcoming count instead of pending count ──
   const upcomingCount = useAssignmentStore(selectUpcomingCount);
+  const { user, logout } = useAuthStore();
 
   return (
     <aside className="fixed left-2 top-2 bottom-2 w-[250px] bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.5)] border border-gray-100/50 flex flex-col z-40">
@@ -29,9 +29,7 @@ export default function Sidebar() {
               className="w-5 h-5 object-contain mix-blend-lighten"
             />
           </div>
-          <span className="font-semibold text-2xl text-gray-700 tracking-tight">
-            VedaAI
-          </span>
+          <span className="font-semibold text-2xl text-gray-700 tracking-tight">VedaAI</span>
         </div>
       </div>
 
@@ -51,27 +49,18 @@ export default function Sidebar() {
           return (
             <Link key={href} href={href}>
               <div className={`flex items-center gap-3 px-3 py-2.5 rounded-lg mb-1 text-sm transition-colors ${
-                isActive
-                  ? 'bg-gray-100 font-medium text-gray-900'
-                  : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+                isActive ? 'bg-gray-100 font-medium text-gray-900' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
               }`}>
                 <img
                   src={iconPath}
                   alt=""
                   className={`w-4 h-4 object-contain transition-all duration-200 ${
-                    isActive
-                      ? 'brightness-0 opacity-100'
-                      : 'brightness-0 opacity-40'
+                    isActive ? 'brightness-0 opacity-100' : 'brightness-0 opacity-40'
                   }`}
                 />
                 <span>{label}</span>
-
-                {/* ── CHANGED: show upcomingCount instead of pendingCount ── */}
                 {label === 'Assignments' && upcomingCount > 0 && (
-                  <span
-                    className="ml-auto text-xs text-white px-2 py-0.5 rounded-full font-medium"
-                    style={{ backgroundColor: '#E8521A', fontSize: '11px' }}
-                  >
+                  <span className="ml-auto text-xs text-white px-2 py-0.5 rounded-full font-medium" style={{ backgroundColor: '#E8521A', fontSize: '11px' }}>
                     {upcomingCount}
                   </span>
                 )}
@@ -88,13 +77,24 @@ export default function Sidebar() {
             <span>Settings</span>
           </div>
         </Link>
+        <button
+          onClick={logout}
+          className="w-full flex items-center gap-3 px-3 py-2 text-sm text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+        >
+          <LogOut size={16} />
+          <span>Sign Out</span>
+        </button>
         <div className="flex items-center gap-3 mt-3 px-3 py-2 bg-gray-50 rounded-xl">
           <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
-            <span className="text-xs font-medium text-gray-600">D</span>
+            <span className="text-xs font-medium text-gray-600">
+              {user?.firstName?.[0]?.toUpperCase() || 'U'}
+            </span>
           </div>
           <div className="overflow-hidden">
-            <p className="text-xs font-medium text-gray-800 truncate">Delhi Public School</p>
-            <p className="text-[10px] text-gray-400 truncate">Bokaro Steel City</p>
+            <p className="text-xs font-medium text-gray-800 truncate">
+              {user ? `${user.firstName} ${user.lastName}` : 'User'}
+            </p>
+            <p className="text-[10px] text-gray-400 truncate">{user?.email || ''}</p>
           </div>
         </div>
       </div>

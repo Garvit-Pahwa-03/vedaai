@@ -8,6 +8,7 @@ import {
   deleteAssignment,
   getGeneratedPaper,
 } from '../controllers/assignmentController';
+import { authMiddleware } from '../middleware/auth';
 
 const storage = multer.diskStorage({
   destination: 'uploads/',
@@ -18,15 +19,17 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage,
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
+  limits: { fileSize: 10 * 1024 * 1024 },
   fileFilter: (_req, file, cb) => {
-    const allowed = ['.pdf', '.png', '.jpg', '.jpeg'];
+    const allowed = ['.pdf', '.png', '.jpg', '.jpeg', '.txt'];
     const ext = path.extname(file.originalname).toLowerCase();
     cb(null, allowed.includes(ext));
   },
 });
 
 const router = Router();
+
+router.use(authMiddleware);
 
 router.post('/', upload.single('file'), createAssignment);
 router.get('/', getAssignments);

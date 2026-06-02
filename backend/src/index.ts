@@ -6,30 +6,27 @@ import fs from 'fs';
 import { connectDB } from './config/database';
 import { wsManager } from './services/websocketManager';
 import assignmentRoutes from './routes/assignmentRoutes';
+import authRoutes from './routes/authRoutes';
 
 const app = express();
 const server = http.createServer(app);
 
-// Ensure uploads directory exists
 if (!fs.existsSync('uploads')) fs.mkdirSync('uploads');
 
-// Middleware
 app.use(cors({
   origin: [
     'http://localhost:3000',
-    'https://your-app.vercel.app',  // your actual Vercel URL
-    /\.vercel\.app$/                // or allow all vercel previews
+    'https://vedaai-seven.vercel.app',
   ],
   credentials: true,
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Routes
+app.use('/api/auth', authRoutes);
 app.use('/api/assignments', assignmentRoutes);
 app.get('/health', (_req, res) => res.json({ status: 'ok' }));
 
-// WebSocket
 wsManager.initialize(server);
 
 const PORT = process.env.PORT || 4000;

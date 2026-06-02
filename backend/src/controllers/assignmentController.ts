@@ -2,8 +2,9 @@ import { Request, Response } from 'express';
 import Assignment from '../models/Assignment';
 import GeneratedPaper from '../models/GeneratedPaper';
 import { addAssignmentJob } from '../queues/assignmentQueue';
+import { AuthRequest } from '../middleware/auth';
 
-export const createAssignment = async (req: Request, res: Response) => {
+export const createAssignment = async (req: AuthRequest, res: Response) => {
   try {
     const { dueDate, questionTypes, additionalInstructions } = req.body;
 
@@ -26,6 +27,7 @@ export const createAssignment = async (req: Request, res: Response) => {
       totalQuestions,
       totalMarks,
       status: 'pending',
+      userId: req.userId,
     });
 
     const jobId = await addAssignmentJob(assignment._id.toString(), {
@@ -46,18 +48,18 @@ export const createAssignment = async (req: Request, res: Response) => {
   }
 };
 
-export const getAssignments = async (_req: Request, res: Response) => {
+export const getAssignments = async (req: AuthRequest, res: Response) => {
   try {
-    const assignments = await Assignment.find().sort({ createdAt: -1 });
+    const assignments = await Assignment.find({ userId: req.userId }).sort({ createdAt: -1 });
     res.json({ success: true, assignments });
   } catch (error: any) {
     res.status(500).json({ success: false, error: error.message });
   }
 };
 
-export const getAssignmentById = async (req: Request, res: Response) => {
+export const getAssignmentById = async (req: AuthRequest, res: Response) => {
   try {
-    const assignment = await Assignment.findById(req.params.id);
+    const assignment = await Assignment.findOne({ _id: req.params.id, userId: req.userId });
     if (!assignment) {
       return res.status(404).json({ success: false, error: 'Not found' });
     }
@@ -67,9 +69,9 @@ export const getAssignmentById = async (req: Request, res: Response) => {
   }
 };
 
-export const deleteAssignment = async (req: Request, res: Response) => {
+export const deleteAssignment = async (req: AuthRequest, res: Response) => {
   try {
-    await Assignment.findByIdAndDelete(req.params.id);
+    await Assignment.findOneAndDelete({ _id: req.params.id, userId: req.userId });
     await GeneratedPaper.deleteMany({ assignmentId: req.params.id });
     res.json({ success: true, message: 'Deleted' });
   } catch (error: any) {
@@ -77,11 +79,9 @@ export const deleteAssignment = async (req: Request, res: Response) => {
   }
 };
 
-export const getGeneratedPaper = async (req: Request, res: Response) => {
+export const getGeneratedPaper = async (req: AuthRequest, res: Response) => {
   try {
-    const paper = await GeneratedPaper.findOne({
-      assignmentId: req.params.assignmentId,
-    });
+    const paper = await GeneratedPaper.findOne({ assignmentId: req.params.assignmentId });
     if (!paper) {
       return res.status(404).json({ success: false, error: 'Paper not generated yet' });
     }
