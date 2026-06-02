@@ -1,21 +1,17 @@
 'use client';
 import { useEffect, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { useAuthStore } from '@/store/authStore';
 
 const publicRoutes = ['/signin', '/signup', '/verify-otp'];
 
 export default function AuthInitializer() {
-  const loadFromStorage = useAuthStore((s) => s.loadFromStorage);
   const router = useRouter();
   const pathname = usePathname();
-  const checkedRef = useRef(false);
+  const didRun = useRef(false);
 
   useEffect(() => {
-    if (checkedRef.current) return;
-    checkedRef.current = true;
-
-    loadFromStorage();
+    if (didRun.current) return;
+    didRun.current = true;
 
     const token = localStorage.getItem('vedaai_token');
     const isPublic = publicRoutes.some((r) => pathname.startsWith(r));

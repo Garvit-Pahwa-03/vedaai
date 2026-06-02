@@ -17,9 +17,14 @@ api.interceptors.response.use(
   (res) => res,
   (err) => {
     if (err.response?.status === 401 && typeof window !== 'undefined') {
-      localStorage.removeItem('vedaai_token');
-      localStorage.removeItem('vedaai_user');
-      window.location.href = '/signin';
+      const isAuthPage = ['/signin', '/signup', '/verify-otp'].some(
+        (r) => window.location.pathname.startsWith(r)
+      );
+      if (!isAuthPage) {
+        localStorage.removeItem('vedaai_token');
+        localStorage.removeItem('vedaai_user');
+        window.location.href = '/signin';
+      }
     }
     return Promise.reject(err);
   }
