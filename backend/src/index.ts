@@ -17,6 +17,7 @@ app.use(cors({
   origin: [
     'http://localhost:3000',
     'https://vedaai-seven.vercel.app',
+    'https://vedaai-pahwagarvit775-6993s-projects.vercel.app',
   ],
   credentials: true,
 }));
