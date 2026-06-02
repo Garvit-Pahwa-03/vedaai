@@ -18,8 +18,6 @@ export default function AuthInitializer() {
 
     if (!token && !isPublic) {
       router.replace('/signin');
-    } else if (token && isPublic) {
-      router.replace('/assignments');
     }
   }, []);
 
