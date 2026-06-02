@@ -16,7 +16,7 @@ if (!fs.existsSync('uploads')) fs.mkdirSync('uploads');
 app.use(cors({
   origin: [
     'http://localhost:3000',
-    'https://vedaai-git-main-pahwagarvit775-6993s-projects.vercel.app',
+    'https://vedaai-seven.vercel.app',
   ],
   credentials: true,
 }));
